@@ -41,8 +41,19 @@ class PreDecorationFilter extends ZuulFilter {
     Object run() {
         RequestContext ctx = RequestContext.getCurrentContext()
 
-        // sets origin
-        ctx.setRouteHost(new URL("http://apache.org/"));
+        String uri = ctx.request.getRequestURI()
+        if (ctx.requestURI != null) {
+            uri = ctx.requestURI
+        }
+        if (uri == null) uri = "/"
+        if (uri.startsWith("/oauth2-server-php/public/")) {
+            ctx.setRouteHost(new URL("http://localhost:3000/"));
+            ctx.addZuulRequestHeader("Host", "localhost:3000");
+        } else {
+            // sets origin
+            ctx.setRouteHost(new URL("http://www.apache.org/"));
+            ctx.addZuulRequestHeader("Host", "www.apache.org");
+        }
 
         // sets custom header to send to the origin
         ctx.addOriginResponseHeader("cache-control", "max-age=3600");
