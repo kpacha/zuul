@@ -46,9 +46,9 @@ class PreDecorationFilter extends ZuulFilter {
             uri = ctx.requestURI
         }
         if (uri == null) uri = "/"
-        if (uri.startsWith("/oauth2-server-php/public/")) {
+        if (uri.startsWith("/token.php") || uri.startsWith("/checktoken.php")) {
             ctx.setRouteHost(new URL("http://localhost:3000/"));
-            ctx.addZuulRequestHeader("Host", "localhost:3000");
+            ctx.addZuulRequestHeader("Host", "oauth2-server-php.local");
         } else {
             // sets origin
             ctx.setRouteHost(new URL("http://www.apache.org/"));

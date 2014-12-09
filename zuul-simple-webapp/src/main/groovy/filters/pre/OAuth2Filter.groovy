@@ -166,7 +166,7 @@ class OAuth2Filter extends ZuulFilter {
         String verb = "GET";
         HttpClient httpclient = CLIENT.get()
 
-        String uri = "/oauth2-server-php/public/checktoken.php"
+        String uri = "/checktoken.php"
 
         try {
             HttpResponse response = validate(httpclient, verb, uri, request, headers)
