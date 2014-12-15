@@ -16,6 +16,7 @@
 
 import com.netflix.zuul.ZuulFilter
 import com.netflix.zuul.context.RequestContext
+import java.util.UUID
 
 /**
  * @author mhawthorne
@@ -55,6 +56,7 @@ class PreDecorationFilter extends ZuulFilter {
             ctx.addZuulRequestHeader("Host", "www.apache.org");
         }
 
+        ctx.addZuulRequestHeader("X-Request-Id", UUID.randomUUID().toString());
         // sets custom header to send to the origin
         ctx.addOriginResponseHeader("cache-control", "max-age=3600");
     }
