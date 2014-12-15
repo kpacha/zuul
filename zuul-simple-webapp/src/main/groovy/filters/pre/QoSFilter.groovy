@@ -36,24 +36,9 @@ class QoSFilter extends ZuulFilter {
     Object run() {
         RequestContext ctx = RequestContext.getCurrentContext()
 
-        String uri = ctx.request.getRequestURI()
-        if (ctx.requestURI != null) {
-            uri = ctx.requestURI
-        }
-        if (uri == null) uri = "/"
-
-        def matcher = PATTERN.matcher(uri)
+        def matcher = PATTERN.matcher(getUri(ctx))
         if(matcher.matches()){
-            String ipAddress = ctx.request.getHeader("X-FORWARDED-FOR")
-            if (ipAddress == null) {
-                ipAddress = ctx.request.getRemoteAddr()
-            }
-
-            Map<String, String> zuulHeaders = ctx.getZuulRequestHeaders()
-            String tag = matcher[0][1] + "-" +
-                zuulHeaders.get("X-Api-User".toLowerCase()) + "-" +
-                zuulHeaders.get("X-Api-Client".toLowerCase()) + "-" +
-                ipAddress
+            String tag = getTag(ctx, matcher[0][1])
 
             Jedis jedis = JEDIS_POOL.getResource()
             def rate = jedis.incr(tag)
@@ -72,6 +57,27 @@ class QoSFilter extends ZuulFilter {
             jedis.close()
         }
 
+    }
+
+    private String getUri(RequestContext ctx) {
+        String uri = ctx.request.getRequestURI()
+        if (ctx.requestURI != null) {
+            uri = ctx.requestURI
+        }
+        if (uri == null) uri = "/"
+        uri
+    }
+
+    private String getIpAddress(RequestContext ctx) {
+        String ipAddress = ctx.request.getHeader("X-FORWARDED-FOR")
+        if (ipAddress == null) ipAddress = ctx.request.getRemoteAddr()
+        ipAddress
+    }
+
+    private String getTag(RequestContext ctx, String resource) {
+        Map<String, String> zuulHeaders = ctx.getZuulRequestHeaders()
+        resource + "-" + zuulHeaders.get("X-Api-User".toLowerCase()) + "-" +
+            zuulHeaders.get("X-Api-Client".toLowerCase()) + "-" + getIpAddress(ctx)
     }
 
 }
