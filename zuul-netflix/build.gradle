@@ -1,7 +1,4 @@
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 
 dependencies {
     compile project(':zuul-core')
@@ -19,6 +16,7 @@ dependencies {
     compile 'com.netflix.turbine:turbine-core:[0.4,)'
     
     provided 'org.powermock:powermock-api-mockito:1.5.4'
+    provided 'junit:junit-dep:4.10'
 }
 
 jar {
@@ -36,15 +34,7 @@ javadoc {
 
 eclipse {
     classpath {
-        plusConfigurations += configurations.provided
         downloadSources = true
         downloadJavadoc = true
-    }
-}
-
-
-idea {
-    module {
-        scopes.PROVIDED.plus += configurations.provided
     }
 }
