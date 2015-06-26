@@ -220,7 +220,7 @@ class OAuth2Filter extends ZuulFilter {
     }
 
     def HttpResponse validate(HttpClient httpclient, String verb, String uri, HttpServletRequest request, Header[] headers) {
-        String queryString = request.getHeader("X-Acces-Token".toLowerCase())
+        String queryString = request.getHeader("X-Access-Token".toLowerCase())
 
         org.apache.http.HttpHost httpHost = new HttpHost("localhost", 3000, "http")
 
